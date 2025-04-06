@@ -3,6 +3,7 @@
 
 import random
 import math
+import ru_local as ru
 import events as ev
 
 planet_systems = [33, 33, 33]
@@ -19,11 +20,11 @@ count_teams = 3
 lots = []
 #List of lists: lots[0] - type of product, lots[1] - name of sails, lots[2] - value of product, lots[3] - price
 
-name_lots = {'oil': 'Топливо',
-             'materials': 'Материалы',
-             'food': 'Еда'}
+name_lots = {'oil': ru.OIL,
+             'materials': ru.MATERIALS,
+             'food': ru.FOOD}
 
-dict_name_station = {0: 'продовольственных', 1: 'материало-добывающих', 2: 'топливо-добывающих'}
+dict_name_station = {0: ru.STATIONS_NAME_PROD, 1: ru.STATIONS_NAME_MAT, 2: ru.STATIONS_NAME_OIL}
 teams = {}
 
 
@@ -32,25 +33,11 @@ def start(teams):
     function - start screen for everyone
     '''
 
-    teams[0] = input('Введите название первой команды ')
-    teams[1] = input('Введите название второй команды ')
-    teams[2] = input('Введите название третьей команды ')
+    teams[0] = input(ru.START_TEAM_O)
+    teams[1] = input(ru.START_TEAM_1)
+    teams[2] = input(ru.START_TEAM_2)
     print('=================================')
-    print('Вы - император космических земель',
-          'Ваша миссия - контроль 80 планетарных систем или накопление 50000 '
-          'материала и удержание до своего следующего хода',
-          'У каждого из вас сейчас:',
-          '33 планетарных систем',
-          '1000 единиц населения'
-          '300000 единиц продовольствия',
-          '20000 единиц топлива',
-          '1000 единиц материала',
-          '100 денежных единиц',
-          '20 добывающих станций:',
-          ' 14 для продовольствия',
-          ' 3 для материалов',
-          ' 3 для топлива',
-          '5 истребителей', sep='\n')
+    print(ru.START_SCREEN, sep='\n')
     print('=================================')
 
 
@@ -83,7 +70,7 @@ def check_loss(planet_systems, population):
     global teams
     for team in teams:
         if planet_systems[team] <= 0 or population[team] <= 0:
-            print(f'Команда {teams[team]} проиграла!')
+            print(ru.lose(teams, team))
             del teams[team]
             return True
     return False
@@ -166,17 +153,17 @@ def costs(team):
 
     food[team] = int(food[team] - population[team] * 250)
     if food[team] < 0:
-        print(f'Император, у вас нехватка продовольствия в размере {abs(food[team])}.',
-              f'Погибло {math.ceil(abs(food[team]) / 250)} населения, запасы продовольствия истощены.', sep='\n')
+        print(f'{ru.NOT_ENOUGH_PROD} {abs(food[team])}.',
+              f'{ru.DIE} {math.ceil(abs(food[team]) / 250)} {ru.STOCKS_OUT}.', sep='\n')
         population[team] -= math.ceil(abs(food[team]) / 250)
         food[team] = 0
 
     oil[team] -= (min_stations[team][0] + min_stations[team][1] + min_stations[team][2]) * 500
     if oil[team] < 0:
         destroyed_station = random.choice(list(dict_name_station))
-        print(f'Император, у вас нехватка топлива для обеспечения исправной работы добывающих станций',
-              f'Выведено из строя {math.ceil(abs(oil[team]) / 500)} {dict_name_station[destroyed_station]}'
-              'рабочих станций, запасы топлива истощены.',
+        print(f'{ru.NOT_ENOUGH_OIL}',
+              f'{ru.OUT} {math.ceil(abs(oil[team]) / 500)} {dict_name_station[destroyed_station]}'
+              f'{ru.STATIONS_OUT}.',
               sep='\n')
         min_stations[team][destroyed_station] -= math.ceil(abs(oil[team]) / 500)
         oil[team] = 0
@@ -185,17 +172,17 @@ def costs(team):
                 min_stations[team][0] + min_stations[team][1] + min_stations[team][2]) * 20
     if dif_actual_and_required_population < 0:
         destroyed_station = random.choice(list(dict_name_station))
-        print(f'Император, у вас нехватка населения для обеспечения исправной работы добывающих станций',
-              f'Выведено из строя {math.ceil(abs(dif_actual_and_required_population) / 20)} '
-              f'{dict_name_station[destroyed_station]} рабочих станций.',
+        print(f'{ru.NOT_ENOUGH_POP}',
+              f'{ru.OUT} {math.ceil(abs(dif_actual_and_required_population) / 20)} '
+              f'{dict_name_station[destroyed_station]} {ru.STAT}.',
               sep='\n')
         min_stations[team][destroyed_station] -= math.ceil(abs(oil[team]) / 20)
 
     if population[team] > planet_systems[team] * 100:
         dead = population[team] - planet_systems[team] * 100
         population[team] -= dead
-        print('Император, ваши планеты перенаселены, люди умирают. ',
-              f'Погибло {dead} населения.')
+        print(f'{ru.OVERPOP}. ',
+              f'{ru.DIE} {dead} {ru.POP}.')
 
 
 def indicators(team):
@@ -217,22 +204,8 @@ def indicators(team):
     food[team] = int(food[team])
 
     q_min_stations = sum(min_stations[team])
-    print('Император, представляем к вашему вниманию последние экономические '
-          'показатели:',
-          f'В вашем распоряжении находится {planet_systems[team]} планетарных систем',
-          f'Величина населения составляет {population[team]} единиц',
-          f'В вашей казне {money[team]} денежных единиц',
-          f'На ваших складах скопилось {materials[team]} единиц материала',
-          f'На ваших складах находится {oil[team]} единиц топлива',
-          f'На ваших складах находится {food[team]} единиц продовольствия',
-          f'В вашем распоряжении находится {min_stations[team][0]} '
-          'продовольственных рабочих станций',
-          f'В вашем распоряжении находится {min_stations[team][1]} '
-          'материало-добывающих рабочих станций',
-          f'В вашем распоряжении находится {min_stations[team][2]} '
-          'топливо-добывающих рабочих станций',
-          'Вы можете построить еще '
-          f'{int(population[team] // 20 - q_min_stations)} рабочих станций',
+    ru.indic_ret(team, planet_systems, population, money, materials, oil, food, min_stations)
+    print(f'{int(population[team] // 20 - q_min_stations)} {ru.STAT}',
           sep='\n')
 
 
