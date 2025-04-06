@@ -636,7 +636,7 @@ def battle(team, opponent):
           f'{ships[team][1]} бомбардировщиков',
           f'{ships[team][2]} корветов', sep='\n')
 
-    jet, bomber, corvette = 1000, 1000, 1000
+    jet, bomber, corvette = 10000, 10000, 10000
 
     while ships[team][0] < jet and ships[team][1] < bomber and ships[team][2] < corvette:
         print('Сколько истребителей, '
@@ -695,9 +695,22 @@ def battle(team, opponent):
         elif b1 == 0 and c1 == 0 and b2 == 0 and c2 == 0:
             j2 -= j1
 
-        j2 = 0 if (j2 - c1) < 0 else (j2 - c1)
-        b2 = 0 if (b2 - j1) < 0 else (b2 - j1)
-        c2 = 0 if (c2 - b1) < 0 else (c2 - b1)
+        if j2 > 0 and b2 > 0 and c2 > 0:
+            j2 = 0 if (j2 - c1) < 0 else (j2 - c1)
+            b2 = 0 if (b2 - j1) < 0 else (b2 - j1)
+            c2 = 0 if (c2 - b1) < 0 else (c2 - b1)
+        
+        elif j2 == 0:
+            b2 = 0 if (b2 - j1 - c1//2) < 0 else (b2 - j1 - c1//2)
+            c2 = 0 if (c2 - b1 - c1//2) < 0 else (c2 - b1 - c1//2)
+        
+        elif b2 == 0:
+            j2 = 0 if (j2 - c1 - j1//2) < 0 else (j2 - c1 - j1//2)
+            c2 = 0 if (c2 - b1 - j1//2) < 0 else (c2 - b1 - j1//2)
+        
+        elif c2 == 0:
+            j2 = 0 if (j2 - c1 - b1) < 0 else (j2 - c1 - b1)
+            b2 = 0 if (b2 - j1 - b1) < 0 else (b2 - j1 - b1)
 
         attacker, defender = defender, attacker
         j1, j2 = j2, j1
@@ -713,6 +726,7 @@ def battle(team, opponent):
         ships[opponent] = [j2_o - j2_u + j2,
                            b2_o - b2_u + b2,
                            c2_o - c2_u + c2]
+        
     elif j1 + b1 + c1 == 0 and n % 2 == 0:
         print(f'Победила команда {teams[team]}')
         planet_systems[team] += area
@@ -723,6 +737,7 @@ def battle(team, opponent):
         ships[opponent] = [j2_o - j2_u,
                            b2_o - b2_u,
                            c2_o - c2_u]
+        
     elif j2 + b2 + c2 == 0 and n % 2 != 0:
         print(f'Победила команда {teams[team]}')
         planet_systems[team] += area
@@ -733,12 +748,14 @@ def battle(team, opponent):
         ships[opponent] = [j2_o - j2_u,
                            b2_o - b2_u,
                            c2_o - c2_u]
+        
     elif j2 + b2 + c2 == 0 and n % 2 == 0:
         print(f'Победила команда {teams[opponent]}')
         ships[team] = [0, 0, 0]
         ships[opponent] = [j2_o - j2_u + j1,
                            b2_o - b2_u + b1,
                            c2_o - c2_u + c1]
+
 
     print(f'Число кораблей команды {teams[team]}',
           f'{ships[team][0]} истребителей',
