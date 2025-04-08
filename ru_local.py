@@ -54,3 +54,19 @@ def indic_ret(team, planet_systems, population, money, materials, oil, food, min
           f'В вашем распоряжении находится {min_stations[team][2]} '
           'топливо-добывающих рабочих станций',
           'Вы можете построить еще ')
+
+TRADE_ASK = ('Вы хотите торговать с галактической федерацией? '
+                               '1 - да, 0 - нет ')
+WHAT_BUY = 'Что Вы хотите купить?'
+CHOICE_GOODS = '1 - еда, 2 - топливо, 3 - материалы, 0 - выйти из меню '
+
+def q_bought(type_g, price):
+    return (f'Цена ед. {type_g} - {price}. '
+            f'Сколько единиц {type_g} вы хотите приобрести? ')
+def des_buy(type_g, q, price, money, team):
+    return (f'Цена {q} единиц {type_g} - {q * price}. \n',
+           f'У вас на балансе {money[team]}\n',
+           f'Покупаем? {q} ед. еды?\n',
+            '1 - да, 0 - нет')
+CONGRAT_FOR_BOUGHT = 'Поздравляем с покупкой!'
+MONEY_NOT_ENOUGHT = 'У вас недостаточно денег'

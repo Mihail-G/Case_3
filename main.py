@@ -221,26 +221,21 @@ def trade(team):
     indict = 2
     while indict != 1 and indict != 0:
         try:
-            indict = int(input('Вы хотите торговать с галактической федерацией? '
-                               '1 - да, 0 - нет '))
+            indict = int(input(ru.TRADE_ASK))
         except:
             continue
 
     match indict:
         case 1:
-            print('Что вы хотите купить? ')
-            purse = int(input('1 - еда, 2 - топливо, 3 - материалы, 0 - выйти из меню '))
+            print(ru.WHAT_BUY)
+            purse = int(input(ru.CHOICE_GOODS))
             match purse:
                 case 0:
                     pass
                 case 1:
                     price = (population[team] ** 2) / 500000
-                    q = int(input(f'Цена ед. еды - {price}. '
-                                  f'Сколько единиц еды вы хотите приобрести? '))
-                    print(f'Цена {q} единиц еды - {q * price}. '
-                          f'У вас на балансе {money[team]}')
-                    des = int(input(f'Покупаем? {q} ед. еды?'
-                                    '1 - да, 0 - нет'))
+                    q = int(input(ru.q_bought('еды', price)))
+                    des = int(input(ru.des_buy('еды', q, price, money, team)))
                     match des:
                         case 0:
                             pass
@@ -248,18 +243,14 @@ def trade(team):
                             if money[team] >= price*q:
                                 food[team] += q
                                 money[team] -= price*q
-                                print('Поздравляем с покупкой!')
+                                print(ru.CONGRAT_FOR_BOUGHT)
                                 indicators(team)
                             else:
-                                print('У вас недостаточно денег')
+                                print(ru.MONEY_NOT_ENOUGHT)
                 case 2:
                     price = random.randint(20, 50)/100
-                    q = int(input(f'Цена ед. топлива - {price}. '
-                                  f'Сколько единиц топлива вы хотите приобрести? '))
-                    print(f'Цена {q} единиц топлива - {price*q}. '
-                          f'У вас на балансе {money[team]}')
-                    des = int(input(f'Покупаем? {q} ед. топлива? '
-                                    '1 - да, 0 - нет '))
+                    q = int(input(ru.q_bought('топлива', price)))
+                    des = int(input(ru.des_buy('топлива', q, price, money, team)))
                     match des:
                         case 0:
                             pass
@@ -267,16 +258,14 @@ def trade(team):
                             if money[team] >= price*q:
                                 oil[team] += q
                                 money[team] -= price*q
-                                print('Поздравляем с покупкой!')
+                                print(ru.CONGRAT_FOR_BOUGHT)
                                 indicators(team)
                             else:
-                                print('У вас недостаточно денег')
+                                print(ru.MONEY_NOT_ENOUGHT)
                 case 3:
                     price = random.randint(80, 120)/5000
-                    q = int(input(f'Цена ед. материала - {price}. '
-                                  f'Сколько единиц материала вы хотите приобрести? '))
-                    des = int(input(f'Покупаем? {q} материала? '
-                                    '1 - да, 0 - нет '))
+                    q = int(input(ru.q_bought('материала', price)))
+                    des = int(input(ru.des_buy('материала', q, price, money, team)))
                     match des:
                         case 0:
                             pass
@@ -284,10 +273,10 @@ def trade(team):
                             if money[team] >= price*q:
                                 materials[team] += q
                                 money[team] -= price*q
-                                print('Поздравляем с покупкой!')
+                                print(ru.CONGRAT_FOR_BOUGHT)
                                 indicators(team)
                             else:
-                                print('У вас недостаточно денег')
+                                print(ru.MONEY_NOT_ENOUGHT)
         case 0:
             pass
 
