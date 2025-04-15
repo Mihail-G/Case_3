@@ -72,6 +72,10 @@ def check_loss(planet_systems, population):
         if planet_systems[team] <= 0 or population[team] <= 0:
             print(ru.lose(teams, team))
             del teams[team]
+            planet_systems[0] += planet_systems[team]//2
+            planet_systems[1] += planet_systems[team]//2
+            planet_systems[2] += planet_systems[team]//2
+            planet_systems[team] = 0
             return True
     return False
 
@@ -138,6 +142,7 @@ def income(team):
     materials[team] += 750 * min_stations[team][1]
     food[team] += 16000 * min_stations[team][0]
     oil[team] += 6000 * min_stations[team][2]
+    population[team] *= 1.3
 
 
 def costs(team):
